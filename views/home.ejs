@@ -1,0 +1,40 @@
+<%- include('partials/header.ejs') %>
+    <section>
+        <div class="table-container">
+            <form action="/generate" method="POST" class="formGenerator">
+                <div>
+                    <input type="radio" name="type" id="4d" value="4" checked>
+                    <label for="4d">4D</label>
+                    <input type="radio" name="type" id="3d" value="3">
+                    <label for="3d">3D</label>
+                    <input type="radio" name="type" id="2d" value="2">
+                    <label for="2d">2D</label>
+                </div>
+                <div>
+                    <input type="text" name="site" placeholder="Jumlah Data" />
+                    <button type="submit">Generate</button>
+                </div>
+            </form>
+            <form action="/save" method="POST">
+                <button type="submit">Save</button>
+            </form>
+            <table id="tableGenerator" class="display">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% locals.dataGenerator.forEach((item, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= item %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+<%- include('partials/footer.ejs') %>
