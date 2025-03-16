@@ -1,5 +1,7 @@
 node_modules
+package-lock.json
 
 datajawatogel2025.txt
 dataSave.txt
+inputToDb.js
 .env

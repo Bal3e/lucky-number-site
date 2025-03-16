@@ -1,5 +1,8 @@
 import express from "express";
 import { readFile, appendFile } from "fs/promises";
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import { pool } from "./config/db.js";
 
 const app = express();
 const port = 3000;
@@ -9,10 +12,6 @@ let dataGenerator = [];
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-app.use(async (req, res, next) => {
-  dataSites = await fetchData();
-  next();
-});
 
 app.get("/", (req, res) => {
   res.render("home.ejs", { dataGenerator });
@@ -37,12 +36,16 @@ app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
 
+// Fetch data dari db untuk dimasukkan ke dalam dataSites
+
 const fetchData = async () => {
-  const data = (await readFile("datajawatogel2025.txt", "utf8"))
-    .split("\n")
-    .map((item) => item.trim());
-  return data;
+  const data = (await pool.query("SELECT * FROM recentdata")).rows
+  data.forEach(item => dataSites.push(item.data))
 };
+
+fetchData();
+
+// end Fetch data
 
 const checkRepeat = (type, num) => {
   num = parseInt(num);
@@ -61,6 +64,9 @@ const generateNumber = (type, count) => {
   }
   if (type === 3 && count > (1000 - dataSites.length)) {
     count = 1000 - dataSites.length;
+  }
+  if (count > 5000) {
+    count = 5000
   }
   let checkParam;
   switch (type) {
@@ -86,7 +92,6 @@ const generateNumber = (type, count) => {
     } while (checkRepeat(checkParam, cacheResult.join("")));
     dataGenerator.push(cacheResult.join(""));
   }
-//   console.log(dataGenerator.sort((a, b) => a - b));
 };
 
 const saveData = async() => {
